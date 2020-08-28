@@ -16,7 +16,7 @@
 #include <QGroupBox>
 #include <QFormLayout>
 #include <QSize>
-
+#include <QDebug>
 
 class UserTab : public QWidget
 {
@@ -28,16 +28,27 @@ signals:
 
 public slots:
     void fncAddGoal();
+    void fncCompleteGoal(QHBoxLayout*);
 
 private:
 
-    std::vector<QString> newGoals;
+    std::vector<QString> goals;
+    std::vector<QString> completeGoals;
 
-    QWidget* goals;
-    QTextEdit* newGoal;
-    QPushButton* btnAddGoal;
-    QVBoxLayout* goalsLayout;
-    QVBoxLayout* mainLayout;
+    void writeGoal(QString&, std::vector<QString>&);
+    void removeGoal(QString&, std::vector<QString>&);
+
+    //UI
+    void uiInit();
+
+    QWidget* ui_goals;
+    QTextEdit* ui_newGoal;
+    QPushButton* ui_btnAddGoal;
+    QVBoxLayout* ui_goalsLayout;
+    QVBoxLayout* ui_mainLayout;
+
+    bool isDone;
+
 };
 
 #endif // USERTAB_H
