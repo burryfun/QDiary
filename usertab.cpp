@@ -94,7 +94,6 @@ void UserTab::clearLayout(QLayout *layout, bool deleteWidgets) {
             clearLayout(childLayout, deleteWidgets);
         delete item;
     }
-    qDebug() << ui_goalsLayout->count();
 }
 
 void UserTab::fncAddGoal(const QString& inputText, const Qt::CheckState& state)
@@ -161,11 +160,9 @@ void UserTab::fncCompleteGoal(QHBoxLayout* layout)
 
 void UserTab::fncDeleteGoal(QHBoxLayout* layout)
 {
-    goals.erase(dynamic_cast<QTextEdit*>(layout->takeAt(1)->widget())->toPlainText());
+    goals.erase(dynamic_cast<QTextEdit*>(layout->itemAt(1)->widget())->toPlainText());
 
     clearLayout(layout);
     ui_goalsLayout->removeItem(layout);
-    qDebug() << ui_goalsLayout->count() << " " << goals.size();
     delete layout;
-
 }
