@@ -51,36 +51,6 @@ void UserTab::readFromFile(const QString &fileName)
     }
 }
 
-
-void UserTab::fncAddGoal(const QString& inputText, const Qt::CheckState& state)
-{
-    goals[inputText] = UNCOMPLETED;
-
-    //add goal in UI
-    QHBoxLayout* layout = new QHBoxLayout;
-    QCheckBox* checkBox = new QCheckBox;
-
-    QTextEdit* text = new QTextEdit(inputText);
-    QSize size = ui_newGoal->document()->size().toSize();
-    text->setFixedHeight(size.height());
-    text->setReadOnly(true);
-    text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    if (state == Qt::Checked)
-    {
-        goals[inputText] = COMPLETED;
-        checkBox->setCheckState(state);
-        QFont f;
-        f.setStrikeOut(true);
-        text->setFont(f);
-    }
-    layout->addWidget(checkBox);
-    layout->addWidget(text);
-
-    ui_goalsLayout->addLayout(layout,0);
-    connect(checkBox, &QCheckBox::clicked, [=]() {fncCompleteGoal(layout);});
-}
-
 void UserTab::uiInit()
 {
     // UI INIT
@@ -124,6 +94,41 @@ void UserTab::clearLayout(QLayout *layout, bool deleteWidgets) {
             clearLayout(childLayout, deleteWidgets);
         delete item;
     }
+    qDebug() << ui_goalsLayout->count();
+}
+
+void UserTab::fncAddGoal(const QString& inputText, const Qt::CheckState& state)
+{
+    goals[inputText] = UNCOMPLETED;
+
+    //add goal in UI
+    QHBoxLayout* layout = new QHBoxLayout;
+    QCheckBox* checkBox = new QCheckBox;
+    QPushButton* deleteBtn = new QPushButton;
+
+    QTextEdit* text = new QTextEdit(inputText);
+    QSize size = ui_newGoal->document()->size().toSize();
+    text->setFixedHeight(size.height());
+    text->setReadOnly(true);
+    text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    deleteBtn->setText("Delete");
+
+    if (state == Qt::Checked)
+    {
+        goals[inputText] = COMPLETED;
+        checkBox->setCheckState(state);
+        QFont f;
+        f.setStrikeOut(true);
+        text->setFont(f);
+    }
+    layout->addWidget(checkBox);
+    layout->addWidget(text);
+    layout->addWidget(deleteBtn);
+
+    ui_goalsLayout->addLayout(layout, 1);
+    connect(checkBox, &QCheckBox::clicked, [=]() {fncCompleteGoal(layout);});
+    connect(deleteBtn, &QPushButton::clicked, [=]() {fncDeleteGoal(layout);});
 }
 
 void UserTab::fncCompleteGoal(QHBoxLayout* layout)
@@ -152,4 +157,15 @@ void UserTab::fncCompleteGoal(QHBoxLayout* layout)
         isDone = false;
     }
     textArea->setFont(f);
+}
+
+void UserTab::fncDeleteGoal(QHBoxLayout* layout)
+{
+    goals.erase(dynamic_cast<QTextEdit*>(layout->takeAt(1)->widget())->toPlainText());
+
+    clearLayout(layout);
+    ui_goalsLayout->removeItem(layout);
+    qDebug() << ui_goalsLayout->count() << " " << goals.size();
+    delete layout;
+
 }

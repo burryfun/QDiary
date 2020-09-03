@@ -44,6 +44,7 @@ signals:
 public slots:
     void fncAddGoal(const QString&, const Qt::CheckState& state = Qt::Unchecked);
     void fncCompleteGoal(QHBoxLayout*);
+    void fncDeleteGoal(QHBoxLayout*);
 
 private:
 
