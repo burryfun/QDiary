@@ -7,6 +7,11 @@ UserTab::UserTab(QString name, QWidget *parent) : QWidget(parent), nameTab(name)
     connect(ui_btnAddGoal, &QPushButton::clicked, [=]() {fncAddGoal(ui_newGoal->toPlainText());});
 }
 
+const QString UserTab::getName() const
+{
+    return nameTab;
+}
+
 void UserTab::writeToFile(QSaveFile &file)
 {
     QTextStream out(&file);

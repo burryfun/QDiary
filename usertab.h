@@ -34,6 +34,7 @@ class UserTab : public QWidget
 public:
 
     explicit UserTab(QString name, QWidget *parent = nullptr);
+    const QString getName() const;
     void writeToFile(QSaveFile& file);
     void readFromFile(QFile& file);
     void readFromFile(const QString& fileName);

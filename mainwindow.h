@@ -6,9 +6,10 @@
 #include <QBoxLayout>
 #include <QMessageBox>
 #include <QSettings>
-#include <QtWidgets>
 #include <QScreen>
 #include <QFileDialog>
+#include <QApplication>
+#include <QCloseEvent>
 
 #include "usertab.h"
 
@@ -35,19 +36,20 @@ private slots:
 
 private:
     void init();
-    void readSettings();
     void createActions();
     bool maybeSave();
+    void setCurrentFile(const QString&);
     bool saveFile(const QString& fileName);
     void loadFile(const QString& fileName);
-    void setCurrentFile(const QString&);
+    void readSettings();
+    void writeSettings();
+
 
     QFile file;
     QString curFile;
 
     Ui::MainWindow *ui;
-    UserTab* YearTab;
-    UserTab* MonthTab;
+    std::vector<UserTab*> tabs;
 
 };
 
