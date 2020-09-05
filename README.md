@@ -19,8 +19,6 @@ sudo apt-get install qt5-default
 ### Get sources
 
 ```
-mkdir Qdiary
-cd Qdiary
 git clone https://github.com/burryfun/QDiary.git 
 ```
 
