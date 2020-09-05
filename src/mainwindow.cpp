@@ -8,6 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    createActions();
+
+    // INITIALIZATION TABS
     UserTab* YearTab = new UserTab("Year Goals");
     UserTab* MonthTab = new UserTab("Month Goals");
     UserTab* WeekTab = new UserTab("Week Goals");
@@ -16,8 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
     tabs.push_back(MonthTab);
     tabs.push_back(WeekTab);
     tabs.push_back(DayTab);
-
-    createActions();
 
     QTabWidget* tabWidget = new QTabWidget;
     for (auto tab : tabs)
@@ -46,25 +47,35 @@ void MainWindow::createActions()
 {
     // FILE MENU
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+    QToolBar* fileToolBar = ui->mainToolBar;
 
-    QAction* newAct = new QAction(tr("&New File"));
+    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
+    QAction* newAct = new QAction(newIcon, tr("&New File"));
     newAct->setShortcuts(QKeySequence::New);
     connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
     fileMenu->addAction(newAct);
-    QAction* openAct = new QAction(tr("&Open..."));
+    fileToolBar->addAction(newAct);
+
+    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
+    QAction* openAct = new QAction(openIcon, tr("&Open..."));
     openAct->setShortcuts(QKeySequence::Open);
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     fileMenu->addAction(openAct);
+    fileToolBar->addAction(openAct);
 
-    QAction* saveAct = new QAction(tr("&Save"));
+    const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
+    QAction* saveAct = new QAction(saveIcon, tr("&Save"));
     saveAct->setShortcuts(QKeySequence::Save);
     connect(saveAct, &QAction::triggered, this, &MainWindow::save);
     fileMenu->addAction(saveAct);
+    fileToolBar->addAction(saveAct);
 
-    QAction* saveAsAct = new QAction(tr("&Save As..."));
+    const QIcon saveAsIcon = QIcon::fromTheme("document-save-as", QIcon(":/images/save-as.png"));
+    QAction* saveAsAct = new QAction(saveAsIcon, tr("&Save As..."));
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     connect(saveAsAct, &QAction::triggered, this, &MainWindow::saveAs);
     fileMenu->addAction(saveAsAct);
+    fileToolBar->addAction(saveAsAct);
 
     fileMenu->addSeparator();
 
@@ -72,6 +83,13 @@ void MainWindow::createActions()
     quitAct->setShortcuts(QKeySequence::Quit);
     connect(quitAct, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
     fileMenu->addAction(quitAct);
+
+    // HELP MENU
+    QMenu* helpMenu = menuBar()->addMenu("Help");
+
+    QAction* aboutAct = new QAction(tr("&About"));
+    connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+    helpMenu->addAction(aboutAct);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -135,6 +153,12 @@ bool MainWindow::saveAs()
         return saveFile(dialog.selectedFiles().first());
 }
 
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About QDiary"),
+                                tr("This simple diary application made by "
+                                   "<a href='https://github.com/burryfun'>burryfun</a>"));
+}
 
 bool MainWindow::maybeSave()
 {

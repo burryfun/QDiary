@@ -3,8 +3,8 @@
 UserTab::UserTab(QString name, QWidget *parent) : QWidget(parent), nameTab(name)
 {
     uiInit();
-
-    connect(ui_btnAddGoal, &QPushButton::clicked, [=]() {fncAddGoal(ui_newGoal->toPlainText());});
+    connect(ui_btnAddGoal, &QPushButton::clicked, [=]() {fncAddGoal(QString::number(goals.size() + 1)
+                                                            + ". " + ui_newGoal->toPlainText());});
 }
 
 const QString UserTab::getName() const

@@ -6,9 +6,10 @@
 
 QT       += core gui
 
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Diary
+TARGET = QDiary
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -25,16 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-        usertab.cpp
+        src/main.cpp \
+        src/mainwindow.cpp \
+        src/usertab.cpp
 
 HEADERS += \
-        mainwindow.h \
-        usertab.h
+        src/mainwindow.h \
+        src/usertab.h
 
 FORMS += \
-        mainwindow.ui
+        src/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

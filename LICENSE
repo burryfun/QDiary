@@ -1,37 +1,4 @@
-# QDiary
-
-Diary application for your goals
-
-Qt application for Linux. Tested with Ubuntu 20.04 and Linux Mint 19.1
-
-![](./images/QDiary.gif)
-
-## Usage
-
-You will need c++11 compiler and Qt
-
-If you haven't Qt, open Terminal and type:
-
-```
-sudo apt-get install qt5-default
-```
-
-### Get sources
-
-```
-mkdir Qdiary
-cd Qdiary
-git clone https://github.com/burryfun/QDiary.git 
-```
-
-### Build and Run
-
-```
-./build.sh
-./build/QDiary
-```
-
-## License
+MIT License
 
 Copyright (c) 2020 Marchenko Kirill
 

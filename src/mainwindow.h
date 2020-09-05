@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QRegExp>
 
 #include "usertab.h"
 
@@ -33,6 +34,7 @@ private slots:
     void open();
     bool save();
     bool saveAs();
+    void about();
 
 private:
     void init();
@@ -44,13 +46,11 @@ private:
     void readSettings();
     void writeSettings();
 
-
     QFile file;
     QString curFile;
 
     Ui::MainWindow *ui;
     std::vector<UserTab*> tabs;
-
 };
 
 #endif // MAINWINDOW_H

@@ -22,7 +22,6 @@
 #include <QSaveFile>
 #include <QStatusBar>
 #include <algorithm>
-#include <QThread>
 #include <QMessageBox>
 
 #define COMPLETED "completed"
@@ -48,15 +47,11 @@ public slots:
     void fncDeleteGoal(QHBoxLayout*);
 
 private:
-
     QString nameTab;
     std::map<QString, QString> goals;
 
-
-
     void newGoal(const QString&, std::vector<QString>&);
     void completeGoal(const QString&, std::vector<QString>&);
-
 
     //UI
     void uiInit();
@@ -67,7 +62,6 @@ private:
     QPushButton* ui_btnAddGoal;
     QVBoxLayout* ui_goalsLayout;
     QVBoxLayout* ui_mainLayout;
-
 };
 
 #endif // USERTAB_H
