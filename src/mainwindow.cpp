@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
 
     // INITIALIZATION TABS
-    UserTab* YearTab = new UserTab("Year Goals");
-    UserTab* MonthTab = new UserTab("Month Goals");
-    UserTab* WeekTab = new UserTab("Week Goals");
-    UserTab* DayTab = new UserTab("Day Goals");
+    UserTab* YearTab = new UserTab(Ui::YEARTAB);
+    UserTab* MonthTab = new UserTab(Ui::MONTHTAB);
+    UserTab* WeekTab = new UserTab(Ui::WEEKTAB);
+    UserTab* DayTab = new UserTab(Ui::DAYTAB);
     tabs.push_back(YearTab);
     tabs.push_back(MonthTab);
     tabs.push_back(WeekTab);

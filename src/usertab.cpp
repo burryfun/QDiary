@@ -1,10 +1,11 @@
 #include "usertab.h"
 
+// + ADD CHECK OF REPEAT DATES IN LISTGOALS
+
 UserTab::UserTab(QString name, QWidget *parent) : QWidget(parent), nameTab(name)
 {
     uiInit();
-    connect(ui_btnAddGoal, &QPushButton::clicked, [=]() {fncAddGoal(QString::number(goals.size() + 1)
-                                                            + ". " + ui_newGoal->toPlainText());});
+
 }
 
 const QString UserTab::getName() const
@@ -25,40 +26,52 @@ void UserTab::writeToFile(QSaveFile &file)
 
 void UserTab::readFromFile(const QString &fileName)
 {
-    QFile file(fileName);
-    file.open(QFile::ReadOnly | QFile::Text);
-    QTextStream in(&file);
-    QString line;
-    while(!in.atEnd())
-    {
-        in.readLineInto(&line);
-        if (line == nameTab)
-        {
-            in.readLineInto(&line);
-            while(line != (nameTab+"End"))
-            {
-                if (line.split(":")[1] == UNCOMPLETED)
-                {
-                    fncAddGoal(line.split(":")[0]);
-                }
-                else
-                {
-                    fncAddGoal(line.split(":")[0], Qt::Checked);
-                }
-                in.readLineInto(&line);
-            }
-            break;
-        }
-        else
-        {
-            in.readLineInto(&line);
-        }
-    }
+//    QFile file(fileName);
+//    file.open(QFile::ReadOnly | QFile::Text);
+//    QTextStream in(&file);
+//    QString line;
+//    while(!in.atEnd())
+//    {
+//        in.readLineInto(&line);
+//        if (line == nameTab)
+//        {
+//            in.readLineInto(&line);
+//            while(line != (nameTab+"End"))
+//            {
+//                if (line.split(":")[1] == UNCOMPLETED)
+//                {
+//                    fncAddGoal(line.split(":")[0]);
+//                }
+//                else
+//                {
+//                    fncAddGoal(line.split(":")[0], Qt::Checked);
+//                }
+//                in.readLineInto(&line);
+//            }
+//            break;
+//        }
+//        else
+//        {
+//            in.readLineInto(&line);
+//        }
+//    }
 }
 
 void UserTab::uiInit()
 {
-    // UI INIT
+    // INITIALIZATION BASE LIST OF GOALS AND BUTTON
+    ui_listGoals = new QComboBox;
+
+    ui_btnAddListGoals = new QPushButton("add new list of goals");
+
+    ui_mainLayout = new QVBoxLayout;
+    ui_mainLayout->setAlignment(Qt::AlignTop);
+    ui_mainLayout->addWidget(ui_listGoals);
+    ui_mainLayout->addWidget(ui_btnAddListGoals);
+    setLayout(ui_mainLayout);
+
+    // INITTIALIZATION HIDDEN UI FOR GOALS
+
     ui_goals = new QWidget;
     ui_newGoal = new QTextEdit;
     ui_btnAddGoal = new QPushButton("add Goal");
@@ -73,11 +86,79 @@ void UserTab::uiInit()
     scroller->setWidgetResizable(true);
     scroller->setWidget(ui_goals);
 
-    ui_mainLayout = new QVBoxLayout;
+    ui_newGoal->setVisible(false);
+    ui_btnAddGoal->setVisible(false);
     ui_mainLayout->addWidget(scroller);
     ui_mainLayout->addWidget(ui_newGoal);
     ui_mainLayout->addWidget(ui_btnAddGoal);
-    setLayout(ui_mainLayout);
+
+    connect(ui_btnAddListGoals, &QPushButton::clicked, this, &UserTab::fncAddListGoals);
+    connect(ui_listGoals, QOverload<int>::of(&QComboBox::activated), [=](int index){ fncChangeList(index); });
+
+}
+
+void UserTab::uiInitGoals()
+{
+
+}
+
+void UserTab::fncAddListGoals()
+{
+    static int i = 0;
+    i++;
+    if (nameTab == Ui::YEARTAB)
+    {
+        QString currentDate = date.currentDate().toString("yyyy");
+        ui_listGoals->addItem(currentDate);
+        listGoals[currentDate + QString::number(i)];
+    }
+    if (nameTab == Ui::MONTHTAB)
+    {
+        QString currentDate = date.currentDate().toString("MMMM");
+        ui_listGoals->addItem(currentDate);
+    }
+    if (nameTab == Ui::WEEKTAB)
+    {
+        int day = date.currentDate().day();
+        QString currentDate = QString::number((day % 7) + 1) + " week";
+        ui_listGoals->addItem(currentDate);
+    }
+    if (nameTab == Ui::DAYTAB)
+    {
+        QString currentDate = date.currentDate().toString("dddd");
+        ui_listGoals->addItem(currentDate);
+    }
+    fncChangeList(ui_listGoals->count() - 1);
+    ui_listGoals->setCurrentIndex(ui_listGoals->count() - 1);
+}
+
+void UserTab::fncChangeList(int index)
+{
+    qDebug() << index;
+    // ПРОЧИТАТЬ ИЗ ФАЙЛА ПО ДАТЕ, КОТОРАЯ ЧИТАЕТСЯ ИЗ ИНДЕКСА COMBOBOX
+//    ui_listGoals->itemText(index);
+//    qDebug() << ui_listGoals->itemText(index);
+
+    // DIRTY HACK
+    delete ui_btnAddGoal;
+    ui_btnAddGoal = new QPushButton("Add Goal");
+    ui_mainLayout->addWidget(ui_btnAddGoal);
+
+    ui_newGoal->setVisible(true);
+    ui_btnAddGoal->setVisible(true);
+    clearLayout(ui_goalsLayout);
+
+    // SHOW GOALS FROM LIST TO UI
+    for (const auto& goal : listGoals[ui_listGoals->itemText(index)])
+    {
+        fncAddGoal(goal.first, index);
+    }
+
+    connect(ui_btnAddGoal, &QPushButton::clicked, [=]()
+    {
+        fncAddGoal(QString::number(listGoals[ui_listGoals->itemText(ui_listGoals->currentIndex())].size() + 1) +
+                                    ". " + ui_newGoal->toPlainText(), index);
+    });
 }
 
 void UserTab::clear()
@@ -101,15 +182,20 @@ void UserTab::clearLayout(QLayout *layout, bool deleteWidgets) {
     }
 }
 
-void UserTab::fncAddGoal(const QString& inputText, const Qt::CheckState& state)
+// PLEASE DELETE INDEX ARG////////////////////////////////
+void UserTab::fncAddGoal(const QString& inputText, const int index, const Qt::CheckState& state)
+// ///////////////////////////////////////////////////////
 {
-    goals[inputText] = UNCOMPLETED;
+    qDebug() << index;
+//    goals[inputText] = UNCOMPLETED;
+    listGoals[ui_listGoals->itemText(ui_listGoals->currentIndex())][inputText] = UNCOMPLETED;
 
     //add goal in UI
     QHBoxLayout* layout = new QHBoxLayout;
     QCheckBox* checkBox = new QCheckBox;
     QPushButton* deleteBtn = new QPushButton;
 
+    // write text from textEditor to new goal
     QTextEdit* text = new QTextEdit(inputText);
     QSize size = ui_newGoal->document()->size().toSize();
     text->setFixedHeight(size.height());
@@ -120,7 +206,8 @@ void UserTab::fncAddGoal(const QString& inputText, const Qt::CheckState& state)
 
     if (state == Qt::Checked)
     {
-        goals[inputText] = COMPLETED;
+//        goals[inputText] = COMPLETED;
+        listGoals[ui_listGoals->itemText(index)][inputText] = COMPLETED;
         checkBox->setCheckState(state);
         QFont f;
         f.setStrikeOut(true);
